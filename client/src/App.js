@@ -12,19 +12,7 @@ axios.defaults.withCredentials = true
 function App() {
   const [user, setUser] = useState({username: "", password: ""});
   const [invalidUser, setInvalidUser] = useState("");
-  //const [ error, setError ] = useState("");
   const history = useHistory();
-
-  // const showError = (err) => {
-  //   if(err.response) {
-  //     const errorMsg = err.response.data.error
-  //     setError(errorMsg)
-  //   }
-  //   else {
-  //     setError("API not available...")
-  //   }
-  // }
-
   
   return (
     <div className="App">

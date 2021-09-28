@@ -46,6 +46,7 @@ app.get('/', (req, res)=> {
 app.post('/login', (req, res)=> {
     
     const { username, password } = req.body;
+    console.log(req.body);
     
     try {
         let authUser = users.find(user => user.username === username && user.password === password);

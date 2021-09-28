@@ -1,19 +1,26 @@
-import {useContext} from 'react';
+import {useContext, useState} from 'react';
 import loginContext from '../context/loginContext';
-import Users from './Users';
+import { useHistory } from 'react-router';
 
 const Login = () => {
 
-    const {user, setUser, invalidUser, setInvalidUser, history} = useContext(loginContext);
+    const {user, setUser, invalidUser, setInvalidUser} = useContext(loginContext);
+    const [inputUser, setInputUser] = useState({});
+    const history = useHistory()
+
+    const inputChange = (e) => {
+      setInputUser({...inputUser, [e.target.name]: e.target.value})
+    }
 
     const login = async(e) => {
         e.preventDefault();
-        let theUser = {username: user.username, password: user.password};
-
+       
+        console.log(inputUser)
         fetch('http://localhost:5000/login', {
           method: 'POST',
+          credentials: 'include',
           headers: { "Content-Type": "application/json" }, 
-          body: JSON.stringify( theUser )
+          body: JSON.stringify(inputUser)
         })
         .then(res => res.json())
         .then(userApi => {
@@ -24,34 +31,32 @@ const Login = () => {
             console.log(user);
             
           } else {
-            setInvalidUser(userApi.username)
+           console.log(userApi.error)
+           setInvalidUser(userApi.error)
           
           }
-            // setUser({username: "", password: ""});
-      
         })
       }
-
+      console.log(invalidUser);
     return (
         <div>
           <form onSubmit={(e)=>{login(e)}}>
             <input
             type="text"
             placeholder="username"
-            value={user.userName}
-            onChange={(e)=> setUser({username: e.target.value, ...user})}  
+            name="username"
+            onChange={(e)=> inputChange(e)}  
             />
             <input
             type="password"
             placeholder="password"
-            value={user.password}
-            onChange={(e)=> setUser({...user, password: e.target.value})} 
+            name="password"
+            onChange={(e)=> inputChange(e)} 
             />
             <button type="submit">login</button>
           </form>
-            {user? <Users /> : <Login />}
-            
-        </div>
+            {invalidUser ? invalidUser : ""}
+      </div>
     )
 }
 
