@@ -2,6 +2,7 @@ import express from 'express'
 import cors from 'cors'
 import jwt from 'jsonwebtoken'
 import cookieParser from 'cookie-parser'
+import bcrypt from 'bcryptjs'
 
 const app = express()
 
@@ -11,16 +12,8 @@ app.use( cookieParser() )
 
 const JWT_SECRET = 'topSecret'
 
-let users = [
-  {
-    username: 'rob',
-    password: 'rob123'
-  },
-  {
-    username: 'vas',
-    password: 'vas123'
-  }
-]
+let users = []
+
 
 const auth = (req, res, next) => {
   const token = req.cookies.token
@@ -36,15 +29,34 @@ const auth = (req, res, next) => {
   }
 }
 
+app.post('/signup', (req, res, next) => {
+  const newUser = { ...req.body }
+
+  newUser.password = bcrypt.hashSync( newUser.password, 10 )
+  newUser.id = Date.now().toString()
+
+  users.push( newUser )
+
+  res.json( newUser )
+})
 
 app.post('/login', (req, res, next) => {
+  const { username, password } = req.body
   try {
     const userFound = users.find(
-      user => user.username === req.body.username && user.password === req.body.password
+      user => user.username === username
     )
+
     if (!userFound) {
       return next(new Error('Login failed'))
     }
+
+    const loginSuccessful = bcrypt.compareSync( password, userFound.password )
+
+    if (!loginSuccessful) {
+      return next( new Error('Password doesnt match'))
+    }
+    
     let token = jwt.sign(
       userFound,
       JWT_SECRET,
