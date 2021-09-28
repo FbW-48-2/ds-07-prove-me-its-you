@@ -4,6 +4,7 @@ import './db-connect.js';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
+import User from './User.js';
 
 const app = express();
 
@@ -15,12 +16,12 @@ app.use( cors({
 app.use( cookieParser() );
 
 const users = [];
-const secret = JSON.stringify(users);
+const secret = "dirtyLittleSecret";
 
 const auth = (req, res, next) => {
    
     const token = req.cookies.token;
-
+    
     if (!token) {
         next(new Error('no token found'));
     }
@@ -42,40 +43,48 @@ app.get('/', (req, res)=> {
 });
 
 app.post('/signup', async (req, res)=> {
-    const userData = req.body;
+    const userData = {...req.body};
     userData.password = bcrypt.hashSync(userData.password, 10);
-    users.push(userData);
-    res.json(userData);
+    const newUser = await User.create(userData);
+    users.push(newUser)
+    console.log(users)
+    res.json(newUser);
 })
 
 
 app.post('/login', async (req, res, next)=> {
     
-    const userData = req.body;
-    const foundUser = await users.find(user=> user.username == userData.username);
+    const {username, password} = {...req.body};
+    const foundUser = await User.findOne({username});
 
-    if(!foundUser) {
-        next(new Error('user does not exist'));
-    };
+    try {
+        if(!foundUser) {
+            return next(new Error('user does not exist'));
+        };
 
-    const loginSuccess = bcrypt.compareSync(userData.password, foundUser.password);
-
-    if (!loginSuccess) {
-        return next(new Error('login failed'));
-    };
-         
-    let token = jwt.sign(foundUser, secret);
-    let sessionInSec = 1000*60*30;
-    res.cookie('token', token, {maxAge: sessionInSec, httpOnly: true});
-    console.log('logged in successfully');
-    delete foundUser.password;
-    res.json( foundUser );
-
-    } 
+        const loginSuccess = await bcrypt.compareSync(password, foundUser.password);
+    
+        if (!loginSuccess) {
+            return next(new Error('login failed'));
+        };
+             
+        let token = await jwt.sign(foundUser.toJSON(), secret);
+        let sessionInSec = 1000*60*30;
+        res.cookie('token', token, {maxAge: sessionInSec, httpOnly: true});
+        console.log('logged in successfully');
+        res.json( foundUser );
+    
+        } 
+    catch(err) {
+        next(err);
+    }
+    }
+    
 );
 
-app.get('/users', auth, (req, res)=> {
-    res.json(users);
+app.get('/users', auth, async (req, res)=> {
+    const allUsers = await User.find();
+    res.json(allUsers);
 })
 
 
