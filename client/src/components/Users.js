@@ -15,7 +15,11 @@ const Users = () => {
               "http://localhost:5000/users", {
               mode: "cors",
               method: "GET",
-              credentials: "include"
+              credentials: "include",
+              headers: {
+                "Content-Type": "application/json",
+                Origin: "http://localhost:3000",
+              }
         })
         .then(res => res.json())
         .then(users => setUsers(users))
@@ -23,7 +27,7 @@ const Users = () => {
 
     return (
         <div>
-       {users.map(user=> user.username).join(', ')}
+       {users && users.map(user=> user.username).join(', ')}
         </div>
     )
 }

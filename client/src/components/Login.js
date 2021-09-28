@@ -3,10 +3,10 @@ import loginContext from '../context/loginContext';
 import { useHistory } from 'react-router';
 
 const Login = () => {
-
+    
     const {user, setUser, invalidUser, setInvalidUser} = useContext(loginContext);
     const [inputUser, setInputUser] = useState({});
-    const history = useHistory()
+    const history = useHistory();
 
     const inputChange = (e) => {
       setInputUser({...inputUser, [e.target.name]: e.target.value})
@@ -15,7 +15,6 @@ const Login = () => {
     const login = async(e) => {
         e.preventDefault();
        
-        console.log(inputUser)
         fetch('http://localhost:5000/login', {
           method: 'POST',
           credentials: 'include',
@@ -37,7 +36,7 @@ const Login = () => {
           }
         })
       }
-      console.log(invalidUser);
+     
     return (
         <div>
           <form onSubmit={(e)=>{login(e)}}>
