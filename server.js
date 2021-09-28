@@ -2,6 +2,7 @@ import express from 'express';
 import cookieParser from 'cookie-parser';
 import jwt from 'jsonwebtoken';
 import cors from 'cors';
+import bcrypt from 'bcryptjs';
 
 // * SETUP
 const JWT_SECRET = "thisIsTheSecretKey";
@@ -13,15 +14,7 @@ app.use(cookieParser());
 app.use(cors({ origin: 'http://localhost:3000', credentials: true }));
 
 // * DATA
-let users = [
-  {
-    username: 'rob',
-    password: 'rob123'
-  },{ 
-    username: 'vas',
-    password: 'vas123'
-  }
-];
+let users = [];
 
 // * MIDDLEWARE
 const auth = (req, res, next) => {
@@ -41,20 +34,28 @@ const auth = (req, res, next) => {
 }
 
 // * ROUTES
+app.post('/signup', async(req, res, next)=>{
+  const userData = req.body;
+  userData.password = bcrypt.hashSync(userData.password, 5);
+  users.push(userData);
+  res.json(userData);
+})
+
 app.post('/login', (req,res, next)=>{
   const data = req.body;
-  console.log(req.body);
-  const foundUser = users.find(user => {
-    return user.username == data.username && user.password == data.password
-  });
+  const foundUser = users.find(user => user.username == data.username);
   if(!foundUser){
-    return next(new Error(`No user with username ${data.username} and password ${data.password} found.`))
-  } else {
-    let jwtToken = jwt.sign(foundUser, JWT_SECRET, {expiresIn: "30m"});
-    res.cookie('token', jwtToken, {httpOnly:true});
-    res.json(foundUser);
+    return next(new Error(`No user with username ${data.username} found.`))
   }
 
+  const loginSuccessful = bcrypt.compareSync(data.password, foundUser.password);
+  if(!loginSuccessful){
+    return next(new Error(`Password is invalid.`))
+  }
+  let jwtToken = jwt.sign(foundUser, JWT_SECRET, {expiresIn: "30m"});
+  res.cookie('token', jwtToken, {httpOnly:true});
+  delete foundUser.password;
+  res.json(foundUser);
 })
 
 app.get('/users', auth, (req, res, next)=>{
