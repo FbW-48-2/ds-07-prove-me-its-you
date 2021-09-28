@@ -59,13 +59,13 @@ app.post('/login', async (req, res, next)=> {
 
     try {
         if(!foundUser) {
-            return next(new Error('user does not exist'));
+            return next(new Error(`'${username}' does not exist`));
         };
 
         const loginSuccess = await bcrypt.compareSync(password, foundUser.password);
     
         if (!loginSuccess) {
-            return next(new Error('login failed'));
+            return next(new Error('wrong password'));
         };
              
         let token = await jwt.sign(foundUser.toJSON(), secret);

@@ -36,3 +36,24 @@
     transform: rotate(360deg);
   }
 }
+
+.header {
+  display: flex;
+  justify-content: center;
+  height: 40px;
+  
+}
+
+a {
+  text-decoration: none;
+  padding: 10px 20px;
+  color: rgb(169, 191, 236);
+}
+
+p {
+  color: rgb(233, 146, 146);
+}
+.active {
+  color: rgb(18, 94, 235);
+  font-weight: bold;
+}

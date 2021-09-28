@@ -11,15 +11,11 @@ const Users = () => {
     }, [user]);
 
     const usersData = async () => {
-        fetch(
+        await fetch(
               "http://localhost:5000/users", {
               mode: "cors",
               method: "GET",
-              credentials: "include",
-              headers: {
-                "Content-Type": "application/json",
-                Origin: "http://localhost:3000",
-              }
+              credentials: "include"
         })
         .then(res => res.json())
         .then(users => setUsers(users))
@@ -27,7 +23,8 @@ const Users = () => {
 
     return (
         <div>
-       {users && users.map(user=> user.username).join(', ')}
+        <h2> Members Only </h2>
+       {users.map(user=> <p>{user.username}</p>)}
         </div>
     )
 }

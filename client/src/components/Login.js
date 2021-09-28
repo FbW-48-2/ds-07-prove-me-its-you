@@ -24,7 +24,7 @@ const Login = () => {
         .then(res => res.json())
         .then(userApi => {
         
-          if (userApi.username && userApi.password) {
+          if (userApi.username) {
             history.push('/users');
             setUser( userApi );
             console.log(user);
