@@ -23,17 +23,20 @@ const Login = () => {
   const handleLogin = async (e) => {
     e.preventDefault()
     const userApi = await auth(loginForm)
-    if (userApi.error) {
-      setMsg(`Ups! something went wrong, try again`)
-    } else {
+    console.log(userApi);
+    if (userApi.error) setMsg(userApi.error)
+    else {
       setUser(userApi)
       history.push('/users')
     }
   }
 
   return (
-    <div className='login'>
+    <section className='login'>
       <h1>Login</h1>
+      {
+        msg && <h2>{msg}</h2>
+      }
       <form onSubmit={handleLogin}>
         <input name='username' value={loginForm.username} onChange={handleInput} placeholder='username' />
         <input name='password' value={loginForm.password} onChange={handleInput} placeholder='password' />
@@ -41,10 +44,8 @@ const Login = () => {
           Login
         </button>
       </form>
-      {
-        msg && <h3>{msg}</h3>
-      }
-    </div>
+      
+    </section>
   )
 }
 

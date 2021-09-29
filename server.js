@@ -12,11 +12,15 @@ app.use( cookieParser() )
 
 const JWT_SECRET = 'topSecret'
 
-let users = []
-
+let users = [{
+  username: 'lucas',
+  password: 'asd123'
+}]
+console.log('users' , users)
 
 const auth = (req, res, next) => {
   const token = req.cookies.token
+  console.log('token -', token)
   if (!token) {
     return next( new Error('You need to be logged in to access here') )
   }
@@ -36,45 +40,85 @@ app.post('/signup', (req, res, next) => {
   newUser.id = Date.now().toString()
 
   users.push( newUser )
+  console.log('newUser =>', newUser)
 
-  res.json( newUser )
+  let token = jwt.sign(
+    {
+      id: newUser.id,
+      username: newUser.username
+    },
+    JWT_SECRET,
+    { expiresIn: '30m' }
+  )
+  console.log('token =>', token)
+
+  res
+    .cookie('token', token, {
+      sameSite: 'None',
+      secure: true,
+      expires: new Date(Date.now() + 172800000),
+      httpOnly: true
+    })
+    .json({ username: newUser.username })
 })
 
 app.post('/login', (req, res, next) => {
   const { username, password } = req.body
+  console.log('user' , req.body)
+  const userFound = users.find(
+    user => user.username === username
+  )
+  
   try {
-    const userFound = users.find(
-      user => user.username === username
-    )
 
     if (!userFound) {
-      return next(new Error('Login failed'))
+      return next(new Error(`user ${username} not found`))
     }
 
     const loginSuccessful = bcrypt.compareSync( password, userFound.password )
 
     if (!loginSuccessful) {
-      return next( new Error('Password doesnt match'))
+      return next( new Error(`Password doesn't match`))
     }
     
     let token = jwt.sign(
-      userFound,
+      {
+        id: userFound.id,
+        username: userFound.username
+      },
       JWT_SECRET,
       { expiresIn: '30m' }
     )
-    res.cookie('token', token, { httpOnly: true })
-    res.json( userFound )
+    
+    res
+      .cookie('token', token, {
+        sameSite: 'None',
+        secure: true,
+        expires: new Date(Date.now() + 172800000),
+        httpOnly: true
+      })
+      .json({ username: userFound.username })
+
   } catch (err) {
+    console.log('error', err)
     next( err )
   }
 })
 
 app.get('/users', auth, (req, res, next) => {
   try {
-    res.json( users )
+    let usersArr = users.map(
+      x => ({ username: x.username })
+    )
+    res.json( usersArr )
   } catch (err) {
     next( err )
   }
+})
+
+app.get("/signout", (req, res, next) => {
+  res.clearCookie("token")
+  res.json({ message: "Logged you out successfully, buddhy!" })
 })
 
 app.use((err, req, res, next) => {

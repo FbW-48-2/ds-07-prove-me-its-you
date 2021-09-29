@@ -3,7 +3,6 @@ import UserContext from './UserContext'
 
 const initialState = {
   username: '',
-  password: ''
 }
 
 const UserState = ({children}) => {

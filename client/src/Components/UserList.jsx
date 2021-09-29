@@ -5,13 +5,16 @@ import { getUsers } from '../helpers/apiCalls'
 const UserList = () => {
   const [ userList, setUserList ] = useState([])
 
-  useEffect(async() => {
-    const resApi = await getUsers()
-    setUserList(resApi)
+  useEffect(() => {
+    const fetchData = async () => {
+      const resApi = await getUsers()
+      setUserList(resApi)
+    }
+    fetchData()
   }, [])
 
   return (
-    <div className='user_list'>
+    <section className='user_list'>
       {
         Array.isArray(userList)
         ? userList?.map((user, i) => (
@@ -19,7 +22,7 @@ const UserList = () => {
         ))
         : <h1>{userList.error}</h1>
       }
-    </div>
+    </section>
   )
 }
 
