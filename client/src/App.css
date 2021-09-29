@@ -57,3 +57,11 @@ p {
   color: rgb(18, 94, 235);
   font-weight: bold;
 }
+
+.hidden {
+  display: none;
+}
+
+.show {
+  display: block;
+}

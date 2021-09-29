@@ -23,7 +23,7 @@ const Users = () => {
 
     return (
         <div>
-        <h2> Members Only </h2>
+        <h2> Members with Token Only </h2>
        {users.map(user=> <p>{user.username}</p>)}
         </div>
     )

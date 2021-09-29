@@ -3,7 +3,7 @@ import { useState } from 'react';
 import loginContext from './context/loginContext';
 import Login from './components/Login';
 import Users from './components/Users';
-import Home from './Home';
+import Home from './components/Home';
 import PrivateRoute from './components/PrivateRoute';
 import { BrowserRouter as Router, Route, Switch, NavLink} from 'react-router-dom';
 
@@ -15,17 +15,22 @@ function App() {
     <div className="App">
       <Router>
         <loginContext.Provider value={{user, setUser, invalidUser, setInvalidUser}} >
-            <div className="header">
+        <div className="header">
             <NavLink activeClassName="active" exact to="/">Home</NavLink>
-            <NavLink activeClassName="active" to="/login">Login</NavLink>
-            <NavLink activeClassName="active" to="/user">Dashboard</NavLink>
-            </div>
+            {user.username === "" ? (
+            <NavLink activeClassName="active" exact to="/login">Login</NavLink>
+            ) : (
+            <NavLink activeClassName="active" exact to="/users">{user.username}</NavLink>
+            )} 
+        </div>
             <Switch>
-              <Route path='/' exact component={Home} />
-              <Route path='/login' component={Login} />
-              <PrivateRoute path='/users' component={Users} />
+              <Route exact path='/' component={Home} />
+              {user.username === "" ? (
+              <Route exact path='/login' component={Login} />
+              ) : (
+              <PrivateRoute exact path='/users' component={Users} />
+              )} 
             </Switch>
-
         </loginContext.Provider>
       </Router>
     </div>

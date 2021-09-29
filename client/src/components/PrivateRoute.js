@@ -6,12 +6,12 @@ const PrivateRoute = ({component: Component, ...rest}) => {
     const {user} = useContext(loginContext);
 
     return (
-
-        <Route {...rest} render={
-            props => (
-                user.username ?
-                <Component {...props} /> : <Redirect to="/login" />
-        )} />
+      <Route {...rest} render={
+        props => (
+            user.username ?
+            <Component {...props} /> : <Redirect to="/login" />
+    )} /> 
+        
     );
 };
 

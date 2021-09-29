@@ -1,6 +1,6 @@
 import {useContext, useState} from 'react';
 import loginContext from '../context/loginContext';
-import { useHistory } from 'react-router';
+import { useHistory, Redirect } from 'react-router';
 
 const Login = () => {
     
