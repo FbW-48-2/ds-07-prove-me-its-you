@@ -14,7 +14,10 @@ const JWT_SECRET = process.env.SECRET_KEY
 
 let users = []
 
-console.log(users);
+const validator = [
+  body("username").escape().trim(), 
+  body("password").escape().trim()
+]
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -54,12 +57,12 @@ app.get('/users', auth, (req, res, next) => {
     }
 })
 
-app.post('/login', [
-    body("username").escape(), 
-    body("password").escape()
-  ],(req, res, next) => {
+app.post('/login', validator,(req, res, next) => {
     const { username, password } = req.body
     try {
+      if(!username && !password) throw new Error('Please enter your username and password')
+      if(!username) throw new Error('Please enter your username')
+      if(!password) throw new Error('Please enter your password')
         // const findUser = users.find(user => user.username === body.username && user.password === body.password)
         const findUser = users.find(user => user.username === username)
         if(!findUser){
@@ -80,18 +83,26 @@ app.post('/login', [
     }
 })
 
-app.post('/signup', [
-    body("username").escape(), 
-    body("password").escape()
-  ],(req, res, next) => {
-    const body = req.body
-    const user = body
-    user._id = Math.random().toString(36).slice(2);
+app.post('/signup', validator,(req, res, next) => {
+    const { username, password } = req.body
+    try {
 
-    user.password = bcrypt.hashSync(user.password, 10)
-    users.push(user)
-    const resp = {username: user.username}
-    res.json(resp)
+      if(!username && !password) throw new Error('Please enter your username and password')
+      if(!username) throw new Error('Please enter your username')
+      if(!password) throw new Error('Please enter your password')
+
+      const user = {...req.body}
+      user._id = Math.random().toString(36).slice(2);
+  
+      user.password = bcrypt.hashSync(user.password, 10)
+      users.push(user)
+    
+      delete user.password
+      res.json(user)
+      
+    } catch (error) {
+      next(error)
+    }
 })
 
 app.use((err, req, res, next) => {
