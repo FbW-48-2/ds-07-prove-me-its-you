@@ -4,6 +4,7 @@ import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import { body } from 'express-validator'
 
 dotenv.config();
 
@@ -53,7 +54,10 @@ app.get('/users', auth, (req, res, next) => {
     }
 })
 
-app.post('/login', (req, res, next) => {
+app.post('/login', [
+    body("username").escape(), 
+    body("password").escape()
+  ],(req, res, next) => {
     const { username, password } = req.body
     try {
         // const findUser = users.find(user => user.username === body.username && user.password === body.password)
@@ -76,7 +80,10 @@ app.post('/login', (req, res, next) => {
     }
 })
 
-app.post('/signup', (req, res, next) => {
+app.post('/signup', [
+    body("username").escape(), 
+    body("password").escape()
+  ],(req, res, next) => {
     const body = req.body
     const user = body
     user._id = Math.random().toString(36).slice(2);
