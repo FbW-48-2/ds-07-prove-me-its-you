@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LogInContext } from './LogInContext'
-import { login, getUsers } from '../helpers/loginHelpers'
+import { login, getUsers } from '../helpers/apiCalls'
 
 
 export default function LogInState({children}) {
@@ -15,6 +15,8 @@ export default function LogInState({children}) {
     useEffect(() => {
         updateUsersArr()
     }, [user])
+
+    console.log(user);
 
     return (
         <LogInContext.Provider

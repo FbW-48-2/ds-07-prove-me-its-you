@@ -5,7 +5,6 @@ import { Link } from 'react-router-dom'
 export default function Home() {
 
     const { user } = useContext(LogInContext)
-
     return (
         <div className="home">
             <h1 className="home__heading">Welcome</h1>

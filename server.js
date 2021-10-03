@@ -2,16 +2,18 @@ import express  from "express";
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import cookieParser from "cookie-parser";
+import bcrypt from 'bcryptjs'
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const app = express()
 
-const JWT_SECRET = `thatSmySecretMdF123456`
+const JWT_SECRET = process.env.SECRET_KEY
 
-let users = [ 
-    { username: 'rob', password: 'rob123' }, 
-    { username: 'vas', password: 'vas123' }
-]
+let users = []
 
+console.log(users);
 
 app.use(cors({
     origin: 'http://localhost:3000',
@@ -52,20 +54,37 @@ app.get('/users', auth, (req, res, next) => {
 })
 
 app.post('/login', (req, res, next) => {
-    const body = req.body
+    const { username, password } = req.body
     try {
-        const findUser = users.find(user => user.username === body.username && user.password === body.password)
+        // const findUser = users.find(user => user.username === body.username && user.password === body.password)
+        const findUser = users.find(user => user.username === username)
         if(!findUser){
-            throw new Error('Invalid credentials, username or password wrong.')
+            throw new Error('Invalid credentials: not user found')
         }
-        let jwtToken = jwt.sign(findUser, JWT_SECRET, { expiresIn: '30m' })
+        const loginSuccessful = bcrypt.compareSync(password, findUser.password)
+
+        if(!loginSuccessful){
+            throw new Error(`Invalid credentials: password does not match with username: ${findUser.username}`)
+        }
+        let jwtToken = jwt.sign({ username: findUser.username }, JWT_SECRET, { expiresIn: '30m' })
 
         const sessionTimeInSecs = 1000*60*3
         res.cookie('token', jwtToken, { maxAge: sessionTimeInSecs, httpOnly: true })
-        res.json(findUser)
+        res.json({ username: findUser.username })
     } catch (error) {
         next(error)
     }
+})
+
+app.post('/signup', (req, res, next) => {
+    const body = req.body
+    const user = body
+    user._id = Math.random().toString(36).slice(2);
+
+    user.password = bcrypt.hashSync(user.password, 10)
+    users.push(user)
+    const resp = {username: user.username}
+    res.json(resp)
 })
 
 app.use((err, req, res, next) => {
