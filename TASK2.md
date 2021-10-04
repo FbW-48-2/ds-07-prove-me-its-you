@@ -2,6 +2,7 @@
 
 Now we wanna add signups of new users with hashed passwords
 
+
 - install package bcryptjs: `npm i bcryptjs` 
   - (documentation for usage: https://www.npmjs.com/package/bcryptjs)
 
@@ -13,6 +14,7 @@ Now we wanna add signups of new users with hashed passwords
   - hash the given password
   - create a new user object with username and the hashed password
     - optional: generate some random ID too 
+
   - store the user in your array with users.push()
   - return the created user with res.json
 
@@ -26,8 +28,9 @@ Now we wanna add signups of new users with hashed passwords
     - in this case: signup a user with Insomnia again and retry your login
 
 
+
+
 ## Bonus
 
 Now hide the password field when sending back the user at the end of your signup route.
-
 

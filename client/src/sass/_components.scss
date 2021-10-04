@@ -1,0 +1,167 @@
+// **********************************************
+// Login FORM
+
+.submit {
+  padding: 5rem;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  height: 100vh;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 2rem 5rem 5rem;
+  box-shadow: var(--shadow-dark);
+
+  width: 50%;
+
+  & > *:not(:last-child) {
+    margin-bottom: 3rem;
+  }
+
+  &__heading {
+    font-size: 4rem;
+  }
+
+  &__input {
+    height: 3rem;
+    width: 70%;
+    box-shadow: var(--shadow-light);
+
+    border: none;
+    border-radius: 100px;
+    font-size: 1.4rem;
+    padding: 0 2rem;
+    transition: 0.4s;
+  }
+
+  &__input:focus {
+    outline: none;
+    font-size: 1.6rem;
+    padding: 0 1.5rem;
+  }
+
+  &__input::placeholder {
+    color: var(--color-grey-dark-3);
+  }
+
+  &__input::-webkit-input-placeholder {
+    color: var(--color-grey-dark-3);
+  }
+
+  &__submit {
+    box-shadow: var(--shadow-light);
+
+    border: none;
+    padding: 1rem;
+    border-radius: 100px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    width: 70%;
+    color: var(--color-grey-dark-2);
+    letter-spacing: 0.1rem;
+
+    &:active {
+      transform: translateY(2px);
+    }
+  }
+  &__submit:hover {
+    cursor: pointer;
+  }
+
+  &__error {
+    color: red;
+    font-size: 1.8rem;
+    font-weight: 600;
+  }
+}
+
+// **********************************************
+// NAVIGATION
+.nav {
+  height: 8rem;
+  color: var(--color-grey-light-4);
+  font-size: 2.8rem;
+  background: linear-gradient(
+    90deg,
+    rgba(82, 102, 111, 1) 24%,
+    rgba(47, 115, 143, 0.9822303921568627) 62%
+  );
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  &__icon {
+    margin-left: 2rem;
+    font-size: 3.5rem;
+  }
+
+  &__list {
+    list-style: none;
+    margin-right: 2rem;
+    display: flex;
+  }
+
+  &__item a {
+    text-decoration: none;
+    color: whitesmoke;
+    margin-right: 2.5rem;
+  }
+}
+
+// **********************************************
+// HOME
+
+.home {
+  text-align: center;
+  &__heading {
+    font-size: 10rem;
+    text-transform: uppercase;
+    font-style: italic;
+    letter-spacing: 1rem;
+  }
+
+  &__text {
+    font-size: 3rem;
+  }
+
+  &__user {
+    font-size: 5rem;
+    text-transform: uppercase;
+    letter-spacing: 1rem;
+    font-weight: 600;
+  }
+}
+
+// **********************************************
+// USERS
+
+.users {
+  font-size: 2.5rem;
+  text-align: center;
+
+  // &__list {
+  // }
+
+  &__item {
+    font-weight: 600;
+  }
+
+  &__item span {
+    margin-right: 1rem;
+  }
+
+  &__error {
+    color: red;
+    font-weight: 600;
+    height: 30vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+  }
+}
